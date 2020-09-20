@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<!--User Story #1: My calculator should contain a clickable element containing an = (equal sign) with a corresponding 
+id="equals".
+
+User Story #2: My calculator should contain 10 clickable elements containing one number each from 0-9, with the following 
+corresponding IDs: id="zero", id="one", id="two", id="three", id="four", id="five", id="six", id="seven", id="eight", and 
+id="nine".
+
+User Story #3: My calculator should contain 4 clickable elements each containing one of the 4 primary mathematical operators 
+with the following corresponding IDs: id="add", id="subtract", id="multiply", id="divide".
+
+User Story #4: My calculator should contain a clickable element containing a . (decimal point) symbol with a corresponding 
+id="decimal".
+
+User Story #5: My calculator should contain a clickable element with an id="clear".
+
+User Story #6: My calculator should contain an element to display values with a corresponding id="display".
+
+User Story #7: At any time, pressing the clear button clears the input and output values, and returns the calculator to its 
+initialized state; 0 should be shown in the element with the id of display.
+
+User Story #8: As I input numbers, I should be able to see my input in the element with the id of display.
+
+User Story #9: In any order, I should be able to add, subtract, multiply and divide a chain of numbers of any length, and 
+when I hit =, the correct result should be shown in the element with the id of display.
+
+User Story #10: When inputting numbers, my calculator should not allow a number to begin with multiple zeros.
+
+User Story #11: When the decimal element is clicked, a . should append to the currently displayed value; two . in one number 
+should not be accepted.
+
+User Story #12: I should be able to perform any operation (+, -, *, /) on numbers containing decimal points.
+
+User Story #13: If 2 or more operators are entered consecutively, the operation performed should be the last operator 
+entered (excluding the negative (-) sign). For example, if 5 + * 7 = is entered, the result should be 35 (i.e. 5 * 7); 
+if 5 * - 5 = is entered, the result should be -25 (i.e. 5 x (-5)).
+
+User Story #14: Pressing an operator immediately following = should start a new calculation that operates on the result 
+of the previous evaluation.
+
+User Story #15: My calculator should have several decimal places of precision when it comes to rounding (note that there 
+is no exact standard, but you should be able to handle calculations like 2 / 7 with reasonable precision to at least 4 decimal 
+places).
+
+Note On Calculator Logic: It should be noted that there are two main schools of thought on calculator input logic: immediate 
+execution logic and formula logic. Our example utilizes formula logic and observes order of operation precedence, immediate 
+execution does not. Either is acceptable, but please note that depending on which you choose, your calculator may yield 
+different results than ours for certain equations (see below example). As long as your math can be verified by another 
+production calculator, please do not consider this a bug.
+
+EXAMPLE: 3 + 5 x 6 - 2 / 4 =
+
+    Immediate Execution Logic: 11.5
+    Formula/Expression Logic: 32.5
+
+You can build your project by forking this CodePen pen ( https://codepen.io/freeCodeCamp/pen/MJjpwO ). Or you can use this CDN 
+link to run the tests in any environment you like: https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js
+-->
+<html lang="EN">
+    <head>
+		<title>freeCodeCamp project - javascript calculator</title>
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+        <style>
+            #container {
+                margin: 5px 25%;
+                font-size: 40px;
+                height: 600px;
+                width:500px;
+                background: LightGray;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                grid-template-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
+                grid-gap: 10px;
+                grid-template-areas:
+                " display display display display display"
+                "screen screen screen screen screen"
+                "clear clear clear equal equal"
+                "seven eight nine divide multiple"
+                "four five six minus plus"
+                "one two three zero decimal";
+            }
+
+            #zero {grid-area: zero;}
+            #one {grid-area: one;}
+            #two {grid-area: two;}
+            #three {grid-area: three;}
+            #four {grid-area: four;}
+            #five {grid-area: five;}
+            #six {grid-area: six;}
+            #seven {grid-area: seven;}
+            #eight {grid-area: eight;}
+            #nine {grid-area: nine;}
+            #divide {grid-area: divide;}
+            #multiply {grid-area: multiple;}
+            #subtract {grid-area: minus;}
+            #add {grid-area: plus;}
+            #equals {grid-area: equal; background-color: darkgreen;}
+            #decimal {grid-area: decimal;}
+            #clear {grid-area: clear; background-color: crimson;}
+            #screen {
+                max-height: 150px;
+                max-width: 100%;
+                grid-area: display;
+                background-color: burlywood;
+                word-wrap: break-word;
+                text-align: start;
+                overflow-y: scroll;
+                overflow-x: hidden;
+            }
+            #display {
+                max-width: 97%;
+                padding: 5px;
+                border:  3px solid black;
+                font-size: 80px;
+                grid-area: screen;
+                width: 100%;
+                color:rgb(47, 92, 3);
+                text-align: end;
+            }
+            p {
+                padding: 0px;
+                margin: 0px;
+            }
+ 
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+"use strict"
+function Button (props) {
+        return <button name={props.buttonName} id={props.buttonValue} onClick={props.handleClick} >{props.buttonName}</button>
+    }
+
+class App extends React.Component {
+    constructor () {
+        super();
+        this.state = {
+            input: ['0'],
+            buttons:[
+                ['0', 'zero'], ['1', 'one'],['2', 'two'],['3', 'three'],['4', 'four'],
+                ['5', 'five'],['6', 'six'],['7','seven'],['8','eight'],['9','nine'],
+                ['/', 'divide'],['*', 'multiply'], ['-', 'subtract'], ['+', 'add'],
+                ['=', 'equals'], ['.', 'decimal'], ['C', 'clear']]
+        }
+        this.handleClick = this.handleClick.bind(this);
+    }
+    handleClick (e) {
+        switch (e.target.id) {
+            case 'clear':
+                this.setState({input: ['0']});
+                break;
+            case 'one':
+            case 'two':
+            case 'three':
+            case 'four':
+            case 'five':
+            case 'six':
+            case 'seven':
+            case 'eight':
+            case 'nine':
+            case 'zero':{
+                const currentNumber = this.state.input[this.state.input.length -1];
+                const currentInput = this.state.input;
+                if ( currentNumber === '0') {
+                    currentInput.pop();
+                    currentInput.push(e.target.name);
+                    this.setState({input: currentInput})
+                } else if(!isNaN(Number(currentNumber))){
+                    const newCurrentNumber = currentNumber.concat(e.target.name);
+                    const newInput = this.state.input.slice(0, this.state.input.length-1);
+                    newInput.push(newCurrentNumber);
+                    this.setState({input: newInput});
+                } else {
+                    const newCurrentNumber = e.target.name;
+                    const newInput = [...this.state.input];
+                    newInput.push(newCurrentNumber);
+                    this.setState({input: newInput});
+                }
+            }
+                break;
+
+            case 'decimal': {
+                const currentInput = this.state.input;
+                const currentNumber = currentInput[currentInput.length -1];
+                
+                if (!isNaN(Number(currentNumber)) && 
+				currentNumber[currentNumber.length-1] !== '.' 
+				&& !currentNumber.includes('.')){
+                    const newCurrentNumber = currentNumber.concat('.');
+                    const newInput = currentInput.slice(0, currentInput.length -1);
+                    newInput.push(newCurrentNumber);
+                    this.setState({input: newInput});
+
+                } else if (currentNumber[currentNumber.length-1] !== '.' && 
+				!currentNumber.includes('.')){
+                    const newCurrentNumber = '0'.concat('.');
+                    const newInput = [...currentInput];
+                    newInput.push(newCurrentNumber);
+                    this.setState({input: newInput});
+                }
+            };
+				break;
+
+            case 'add':
+            case 'divide':
+            case 'multiply':{
+                let newInput;
+                if (this.state.input.length === 1 && (this.state.input[this.state.input.length -1] === '0' || 
+				this.state.input[this.state.input.length -1] === '-')){
+                } else if (isNaN(Number(this.state.input[this.state.input.length -1]))){
+                    newInput = [...this.state.input];
+                    newInput.pop();
+                    if (isNaN(Number(this.state.input[this.state.input.length -2]))){
+                        newInput.pop();
+                    }
+                    newInput.push(e.target.name);
+                    this.setState({input: newInput});
+                } else {
+                    newInput = [...this.state.input];
+                    newInput.push(e.target.name);
+                    this.setState({input: newInput});
+                }
+            };
+                break;
+            case 'subtract':{
+                let newInput;
+                if ((isNaN(Number(this.state.input[this.state.input.length -1])) && this.state.input < 2) || 
+				this.state.input[this.state.input.length -1]=== '-' || 
+				this.state.input[this.state.input.length -1] === '+' || 
+				this.state.input[this.state.input.length -1] === '0'){
+                    newInput = [...this.state.input];
+                    newInput.pop();
+                    newInput.push(e.target.name);
+                    this.setState({input: newInput});
+                } else {
+                    newInput = [...this.state.input];
+                    newInput.push(e.target.name);
+                    this.setState({input: newInput});
+                }
+            };
+                break;
+            case 'equals': {
+                let equation = [...this.state.input];
+                if (isNaN(Number(equation[equation.length-1]))){
+                    equation.pop();
+                }
+                if(equation.length == 0 ){
+                    this.setState({input: ['0']});
+                }
+                if(equation.length == 1){
+                    this.setState({input: equation});
+                }
+                let tempValue;
+                let tempEquation
+                while (equation.indexOf('*') !== -1){
+                    let i = equation.indexOf('*');
+                    if(i === 1){
+                        if(equation[2] === '-'){
+                            tempValue =  Number(equation[0]) * Number(equation[3]);
+                            tempEquation = equation.slice(4, equation.length);
+                            tempEquation.unshift('-', String(tempValue));
+                            equation = tempEquation;
+                        } else {
+                            tempValue = Number(equation[0]) * Number(equation[2]);
+                            tempEquation = equation.slice(3, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        }
+                    } else if(i === 2 ){
+                        if(equation[3] === '-'){
+                            tempValue =  Number(equation[1]) * Number(equation[4]);
+                            tempEquation = equation.slice(5, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        } else {
+                            tempValue = Number(equation[1]) * Number(equation[3]);
+                            tempEquation = equation.slice(4, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        }
+                    } else {
+                        if (equation[i+1] === '-'){
+                            tempValue =  Number(equation[i-1]) * Number(equation[i+2]);
+                            tempEquation = equation.slice(i+3, equation.length);
+                            if (equation[i-2] === '-'){
+                                tempEquation.unshift('+', String(tempValue));
+                                tempEquation = equation.slice(0, i-2).concat(tempEquation);
+                                equation = tempEquation;
+                            } else {
+                                tempEquation.unshift('-', String(tempValue));
+                                tempEquation = equation.slice(0, i-2).concat(tempEquation);
+                                equation = tempEquation;
+                            }
+                        } else {
+                            tempValue =  Number(equation[i-1]) * Number(equation[i+1]);
+                            tempEquation = equation.slice(i+2, equation.length);
+                            if (equation[i-2] === '-'){
+                                tempEquation.unshift('-', String(tempValue));
+                                tempEquation = equation.slice(0, i-2).concat(tempEquation);
+                                equation = tempEquation;
+
+                            } else {
+                                tempEquation.unshift('+', String(tempValue));
+                                tempEquation = equation.slice(0, i-2).concat(tempEquation);
+                                equation = tempEquation;
+                            }
+                        }
+                    }
+                }//while '*'
+
+                while (equation.indexOf('/') !== -1){
+                    let i = equation.indexOf('/');
+                    if(i === 1){
+                        if(equation[2] === '-'){
+                            tempValue =  Number(equation[0]) / Number(equation[3]);
+                            tempEquation = equation.slice(4, equation.length);
+                            tempEquation.unshift('-', String(tempValue));
+                            equation = tempEquation;
+                        } else {
+                            tempValue = Number(equation[0]) / Number(equation[2]);
+                            tempEquation = equation.slice(3, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        }
+                    } else if(i === 2){
+                        if(equation[3] === '-'){
+                            tempValue =  Number(equation[1]) / Number(equation[4]);
+                            tempEquation = equation.slice(5, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        } else {
+                            tempValue = Number(equation[1]) / Number(equation[3]);
+                            tempEquation = equation.slice(4, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        }
+                    } else {
+                        if (equation[i+1] === '-'){
+                            tempValue =  Number(equation[i-1]) / Number(equation[i+2]);
+                            tempEquation = equation.slice(i+3, equation.length);
+                            if(equation[i-2] === '-'){
+                                tempEquation.unshift(String(tempValue));
+                                tempEquation = equation.slice(0, i-2).concat(tempEquation);
+                                equation = tempEquation;
+                            } else {
+                                tempEquation.unshift('-', String(tempValue));
+                                tempEquation = equation.slice(0, i-1).concat(tempEquation);
+                                equation = tempEquation;
+                            }
+                        } else {
+                            tempValue =  Number(equation[i-1]) / Number(equation[i+1]);
+                            tempEquation = equation.slice(i+2, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            tempEquation = equation.slice(0, i-1).concat(tempEquation);
+                            equation = tempEquation;
+                        }
+                    }
+                }//while '/'
+                
+                while (equation.indexOf('+') !== -1){
+                    let i = equation.indexOf('+');
+                    if(i === 1){
+                        tempValue = Number(equation[0]) + Number(equation[2]);
+                        tempEquation = equation.slice(3, equation.length);
+                        tempEquation.unshift(String(tempValue));
+                        equation = tempEquation;
+                    } else {
+                        tempValue =  Number(equation[i+1]) - Number(equation[i-1]);
+                        if (tempValue <= 0) {
+                            tempEquation = equation.slice(i+2, equation.length);
+                            tempEquation.unshift(String(Math.abs(tempValue)));
+                            tempEquation = equation.slice(0, i-1).concat(tempEquation);
+                            equation = tempEquation;
+                        } else {
+                            tempEquation = equation.slice(i+2, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            tempEquation = equation.slice(0, i-1).concat(tempEquation);
+                            equation = tempEquation;
+                        }
+                    }
+                }
+                while (equation.length > 2 && equation.indexOf('-') !== -1){
+                    let i = equation.indexOf('-');
+                        if (i === 0){
+                            tempValue =  Number(equation[1]) + Number(equation[3]);
+                            tempEquation = equation.slice(4, equation.length);
+                            tempEquation.unshift('-', String(tempValue));
+                            equation = tempEquation;
+                        } else {
+                            tempValue =  Number(equation[0]) - Number(equation[2]);
+                            tempEquation = equation.slice(3, equation.length);
+                            tempEquation.unshift(String(tempValue));
+                            equation = tempEquation;
+                        }
+                }
+                this.setState({input: equation});
+            }//case
+            break;
+        }//switch
+    }
+    render(){
+        let myDisplay = this.state.input[this.state.input.length - 1];
+        if(this.state.input.length > 1 && this.state.input[this.state.input.length - 2] === '-') {
+            myDisplay = '-'.concat(this.state.input[this.state.input.length - 1])
+        }
+        return <div id='container'>
+            <div id='screen'>{this.state.input.map(el => <p>{el}</p>)}</div>
+            <div id='display'>{myDisplay.length <12 ? myDisplay : Number(myDisplay).toPrecision(7)}</div>
+            {this.state.buttons.map( el => <Button  buttonValue={el[1]} buttonName={el[0]} handleClick={this.handleClick} />)}
+        </div>
+    }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+        </script>
+    </body>
+</html>
