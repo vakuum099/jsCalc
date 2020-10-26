@@ -1,0 +1,141 @@
+#root {
+    font-family: 'Roboto', sans-serif;
+    margin:0;
+    padding:0;
+}
+
+#display,
+#container {
+    margin: 0px 25%;
+}
+
+#display {
+    color: #f5f5f5;
+    background-color:#141414;
+    border-top-left-radius: 10%;
+    border-top-right-radius: 10%;
+    box-shadow: 10px 10px 15px #909090;
+    max-width: 365px;
+    height:284px;
+    padding-right: 10px;
+    font-size: 72px;
+    width: 100%;
+    text-align: end;
+}
+
+p {
+    margin: 0px;
+    padding-top: 185px;
+}
+
+#container {
+    font-size: 32px;
+    height: 528px;
+    max-width:375px;
+    min-width:375px;
+    background-color: #f5f5f5;
+    border-bottom-left-radius: 6%;
+    border-bottom-right-radius: 6%;
+    box-shadow: 10px 10px 15px #afafaf;
+    display: grid;
+    justify-content:space-evenly;
+    align-content: space-evenly;
+    grid-template-columns: 72px 72px 72px 72px;
+    grid-template-rows: 72px 72px 72px 72px 72px;
+    grid-template-areas:
+    "clear backspace plusminus  divide"
+    "seven eight nine  multiple"
+    "four five six minus "
+    "one two three plus "
+    ". zero decimal equal"
+    ". . . . ";
+}
+
+button[name="0"] {grid-area: zero;}
+button[name="1"] {grid-area: one;}
+button[name="2"] {grid-area: two;}
+button[name="3"] {grid-area: three;}
+button[name="4"] {grid-area: four;}
+button[name="5"] {grid-area: five;}
+button[name="6"] {grid-area: six;}
+button[name="7"] {grid-area: seven;}
+button[name="8"] {grid-area: eight;}
+button[name="9"] {grid-area: nine;}
+button[name="/"] {grid-area: divide;}
+button[name="*"] {grid-area: multiple;}
+button[name="-"] {grid-area: minus;}
+button[name="+"] {grid-area: plus;}
+button[name="="] {grid-area: equal;}
+button[name="."] {grid-area: decimal;}
+button[name="AC"] {grid-area: clear;}
+button[name="C"] {grid-area: backspace;}
+button[name="+/-"] {grid-area: plusminus;}
+button[name="%"] {grid-area: percent;}
+
+button[name="AC"],
+button[name="C"],
+button[name="-"],
+button[name="%"],
+button[name="/"],
+button[name="*"],
+button[name="+/-"],
+button[name="+"],
+button[name="="],
+button[name="."]{
+    color: #808080;
+}
+
+button {
+    color:#505050;
+    border-radius: 50%;
+    box-shadow: 4px 4px 8px #d6d6d6,
+    -3px -3px 4px #fafafa;
+    border: #f0eeed;
+    border-width: 1px;
+    border-style: solid;
+    font-size:32px;
+}
+
+button[name="="] {
+    background-color: #fbd120;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ffd739;
+    box-shadow: 4px 4px 8px #f0d776,
+    -3px -3px 4px #fff6d3;
+}
+
+button:hover {
+    background-color: #f3f3f3;
+    border: #f3f2f1;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 4px 4px 8px rgb#e6e6e6,
+    -3px -3px 4px rgb#fafafa;
+}
+
+button[name="="]:hover  {
+    background-color:  #fed423;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ffcf24;
+    box-shadow: 4px 4px 8px #f0d776,
+    -3px -3px 4px #fff6d3
+}
+
+button[name].clicked{
+    background-color: #ececec;
+    border-color: #efedec;
+    box-shadow: inset 2px 2px 4px #e9e9e9,
+    inset -2px -2px 4px #f3f3f3;
+    color: #303030;
+}
+
+button[name="="].clicked{
+    background-color: #bb9600;
+    border-width: 1px;
+    border-style: solid;
+    border-color: none;
+    box-shadow: inset 4px 4px 4px #947600,
+    inset -2px -2px 4px #ffcc00;
+}
