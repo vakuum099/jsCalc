@@ -1,3 +1,7 @@
+body {
+    width: 100vw;
+}
+
 #root {
     font-family: 'Roboto', sans-serif;
     margin:0;
@@ -6,7 +10,7 @@
 
 #display,
 #container {
-    margin: 0px 25%;
+    margin: 0px auto;
 }
 
 #display {
@@ -31,8 +35,7 @@ p {
 #container {
     font-size: 32px;
     height: 528px;
-    max-width:375px;
-    min-width:375px;
+    width:375px;
     background-color: #f5f5f5;
     border-bottom-left-radius: 6%;
     border-bottom-right-radius: 6%;
