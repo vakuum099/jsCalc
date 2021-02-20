@@ -21,7 +21,6 @@ class App extends React.Component {
         this.setState({ input: buttonClickLogic(e.target, this.state.input) });
     }
     render() {
-        console.log(this.state.input);
         const input = this.state.input;
         let myDisplay = input[input.length - 1];
         if (input.length > 1 && input[input.length - 2] === '-') {
